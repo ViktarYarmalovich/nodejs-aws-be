@@ -20,7 +20,7 @@ components:
           type: string
           description: Unique ID of Product
           example: Carbide-Hand-Chisel
-        name:
+        title:
           type: string
           description: Product name
           example: Carbide Hand Chisel
@@ -40,8 +40,11 @@ components:
           type: string
           description: Date of Product creation.
           example: 2020-10-09
+        price:
+          type: integer
+          description: Price of Product in $
+          example: 57
          
-
   requestBodies:
     Product:
       content:
