@@ -1,4 +1,4 @@
-import { ProductModel } from "./product.model";
+import { ProductModel } from './product.model';
 
 export class ProductsService {
   
@@ -71,34 +71,37 @@ export class ProductsService {
     ];
   
   
-    getList() {
-        return this.products;
+    async getList() : Promise<ProductModel[]>  {
+        return Promise.resolve(this.products);    
     }
-  
-    createProduct(item: ProductModel) {
-        return this.products.push(item);
-    }
-  
-    getProductById(id: string) {
-        return this.products.find(product => product.id === id);
-    }
-  
-    updateProduct(item: ProductModel) {
-        let index = this.products.findIndex(product => product.id === item.id);
-        if (index === -1) {
-            return null;
-        }
 
-        this.products[index] = item;
-        return this.products[index];
+    async getProductById(id: string) : Promise<ProductModel> {
+        return this.getList()
+            .then((products) => { 
+                return products.find(product => product.id === id)
+            });
     }
   
-    removeProduct(id: string) {
-        let index = this.products.findIndex(product => product.id === id);
-        if (index === -1) {
-            return null;
-        }
-        return this.products.splice(index, 1);
-    }
+    // createProduct(item: ProductModel) {
+    //     return this.products.push(item);
+    // }
+  
+    // updateProduct(item: ProductModel) {
+    //     let index = this.products.findIndex(product => product.id === item.id);
+    //     if (index === -1) {
+    //         return null;
+    //     }
+
+    //     this.products[index] = item;
+    //     return this.products[index];
+    // }
+  
+    // removeProduct(id: string) {
+    //     let index = this.products.findIndex(product => product.id === id);
+    //     if (index === -1) {
+    //         return null;
+    //     }
+    //     return this.products.splice(index, 1);
+    // }
 }
   

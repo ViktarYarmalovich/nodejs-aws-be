@@ -6,27 +6,31 @@ export const getProductById: APIGatewayProxyHandler = async (event, _context) =>
   const productsService: ProductsService = new ProductsService();
   const { id } = event.pathParameters;
 
-  var resultStatusCode = 200;
-  var resultBody ='';
+  return productsService.getProductById(id)
+    .then((product) => {
+      let resultStatusCode = 404;
+      let resultBody = `{ "message": "Product with id: ${id} is not found." }`;
 
-  try {
-    const result = productsService.getProductById(id);
-    if (result === undefined) {
-      resultStatusCode = 404;
-      resultBody = `{ "message": "Product with id: ${id} is not found." }`;
-    } else {
-      resultBody = JSON.stringify(result);
-    }
-  } catch (error) {
-    resultStatusCode = 500;
-    resultBody = `{ "message": "${error}" }`;
-  }
+      if (product !== undefined) {
+        resultStatusCode = 200;
+        resultBody = JSON.stringify(product);
+      }
 
-  return {
-    statusCode: resultStatusCode,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: resultBody
-  };
+      return {
+        statusCode: resultStatusCode,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: resultBody
+      };
+    })
+    .catch((error) => {
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: `{ "message": "${error}" }`
+      };
+    });
 }

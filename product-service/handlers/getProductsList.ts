@@ -5,21 +5,31 @@ import { ProductsService } from '../services/product.service';
 export const getProductsList: APIGatewayProxyHandler = async () => {
   const productsService: ProductsService = new ProductsService();
 
-  var resultStatusCode = 200;
-  var resultBody ='';
+  return productsService.getList()
+    .then((products) => {
+      let resultStatusCode = 404;
+      let resultBody = '{ "message": "No products found in the store." }';
 
-  try {
-    resultBody = JSON.stringify(productsService.getList());
-  } catch (error) {
-    resultStatusCode = 500;
-    resultBody = `{ "message": "${error}" }`;
-  }
+      if (products?.length) {
+        resultStatusCode = 200;
+        resultBody = JSON.stringify(products);
+      }
 
-  return {
-    statusCode: resultStatusCode,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
-    body: resultBody
-  };
+      return {
+        statusCode: resultStatusCode,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: resultBody
+      };
+    })
+    .catch((error) => {
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: `{ "message": "${error}" }`
+      };
+    });
 }
