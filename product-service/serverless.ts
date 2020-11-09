@@ -24,7 +24,7 @@ const serverlessConfiguration: Serverless = {
       minimumCompressionSize: 1024,
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '',
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       PG_HOST: '',
       PG_PORT: '',
       PG_DATABASE: '',
