@@ -13,7 +13,7 @@ CREATE TABLE products (
 
 CREATE TABLE stocks (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-	product_id uuid,
+	product_id uuid UNIQUE,
 	count integer,
 	FOREIGN KEY ("product_id") REFERENCES "products" ("id") 
 );

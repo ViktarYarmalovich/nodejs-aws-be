@@ -24,7 +24,12 @@ const serverlessConfiguration: Serverless = {
       minimumCompressionSize: 1024,
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '',
+      PG_HOST: '',
+      PG_PORT: '',
+      PG_DATABASE: '',
+      PG_USERNAME: '',
+      PG_PASSWORD: '',
     },
   },
   functions: {
@@ -55,6 +60,18 @@ const serverlessConfiguration: Serverless = {
                 }
               }
             }
+          }
+        }
+      ]
+    },
+    createProduct: {
+      handler: 'handler.createProduct',
+      events: [
+        {
+          http: {
+            method: 'post',
+            path: 'products',
+            cors: true,
           }
         }
       ]

@@ -3,6 +3,8 @@ import 'source-map-support/register';
 import { ProductsService } from '../services/product.service';
 
 export const getProductById: APIGatewayProxyHandler = async (event, _context) => {
+  console.log('event: ', event);
+  
   const productsService: ProductsService = new ProductsService();
   const { id } = event.pathParameters;
 
@@ -25,12 +27,13 @@ export const getProductById: APIGatewayProxyHandler = async (event, _context) =>
       };
     })
     .catch((error) => {
+      console.log(error);
       return {
         statusCode: 500,
         headers: {
           'Access-Control-Allow-Origin': '*'
         },
-        body: `{ "message": "${error}" }`
+        body: `{ "message": "Internal Server Error. See the log file for details." }`
       };
     });
 }
