@@ -35,15 +35,19 @@ components:
         img: 
           type: string
           description: Link to main Product picture
-          example: 
+          example: https://i.pinimg.com/originals/fb/83/1c/fb831c528d9dbed9a15b6d96d651594a.jpg
         creationDate:
           type: string
           description: Date of Product creation.
-          example: 2020-10-09
+          example: '2020-10-09'
         price:
           type: integer
           description: Price of Product in $
           example: 57
+        count:
+          type: integer
+          description: stock amount of Product
+          example: 453
          
   requestBodies:
     Product:
@@ -80,8 +84,12 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/Product"
       responses:
-        default:
-          description: successful operation
+        '201':
+          description: Success product creation responce
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
 
   /products/{id}:
     get:

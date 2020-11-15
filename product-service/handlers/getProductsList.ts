@@ -2,7 +2,9 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import { ProductsService } from '../services/product.service';
 
-export const getProductsList: APIGatewayProxyHandler = async () => {
+export const getProductsList: APIGatewayProxyHandler = async (event, _context) => {
+  console.log('event: ', event);
+  
   const productsService: ProductsService = new ProductsService();
 
   return productsService.getList()
@@ -24,12 +26,13 @@ export const getProductsList: APIGatewayProxyHandler = async () => {
       };
     })
     .catch((error) => {
+      console.log(error);
       return {
         statusCode: 500,
         headers: {
           'Access-Control-Allow-Origin': '*'
         },
-        body: `{ "message": "${error}" }`
+        body: `{ "message": "Internal Server Error. See the log file for details." }`
       };
     });
 }
