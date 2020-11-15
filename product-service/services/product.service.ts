@@ -25,7 +25,8 @@ const GET_PRODUCTS_BY_ID_SQL = GET_PRODUCTS_SQL + ' WHERE p.url_id = $1';
 
 const CREATE_PRODUCT_SQL = 
     'INSERT INTO products (url_id, title, description, weight, img, creation_date, price) '
-    + 'VALUES ($1, $2, $3, $4, $5, $6, $7)';
+    + 'VALUES ($1, $2, $3, $4, $5, $6, $7)'
+    + 'RETURNING url_id as id, title, description, weight, img, creation_date, price';
 
 const CREATE_STOCK_SQL = 'INSERT INTO stocks (product_id, count) VALUES ((SELECT id from products WHERE url_id=$1), $2)';
 
@@ -69,7 +70,7 @@ export class ProductsService {
             await client.query('BEGIN');
 
             // url_id, title, description, weight, img, creation_date, price
-            await client.query(CREATE_PRODUCT_SQL, 
+            const result =  await client.query(CREATE_PRODUCT_SQL, 
                     [item.id, 
                     item.title, 
                     item.description, 
@@ -82,10 +83,8 @@ export class ProductsService {
 
             await client.query('COMMIT');
 
-            // return new created product
-            const result =  await client.query(GET_PRODUCTS_BY_ID_SQL, [item.id]);
             return result.rows[0];
-
+            
         } catch (error) {
             await client.query('ROLLBACK');
             throw error;
