@@ -26,12 +26,13 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       HOT_FOLDERS_BUCKET_NAME: 'hot-folders',
+      HOT_FOLDERS_BUCKET_REGION: 'eu-west-1',
     },
     iamRoleStatements: [
       {
         Effect: 'Allow',
         Action: 's3:*',
-        Resource: `arn:aws:s3:::hot-folders/*`
+        Resource: 'arn:aws:s3:::hot-folders/*'
       }
     ]
   },

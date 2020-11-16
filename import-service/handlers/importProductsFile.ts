@@ -2,7 +2,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import * as AWS from 'aws-sdk';
 
-const { HOT_FOLDERS_BUCKET_NAME } = process.env;
+const { HOT_FOLDERS_BUCKET_NAME, HOT_FOLDERS_BUCKET_REGION } = process.env;
 
 export const importProductsFile: APIGatewayProxyHandler = async (event, _context) => {
   console.log('event: ', event);
@@ -13,8 +13,7 @@ export const importProductsFile: APIGatewayProxyHandler = async (event, _context
     return {
         statusCode: 400,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
+          'Access-Control-Allow-Origin': '*'
         },
         body: `{ "message": "Query parameter 'name' is missing." }`
     };      
@@ -27,15 +26,14 @@ export const importProductsFile: APIGatewayProxyHandler = async (event, _context
       ContentType: 'text/csv'
   };
 
-  const s3 = new AWS.S3({ region: 'eu-west-1' });
+  const s3 = new AWS.S3({ region: HOT_FOLDERS_BUCKET_REGION });
 
   return s3.getSignedUrlPromise('putObject', params)
     .then((signedUrl) => {
       return {
         statusCode: 200,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
+          'Access-Control-Allow-Origin': '*'
         },
         body: signedUrl
       };
@@ -45,8 +43,7 @@ export const importProductsFile: APIGatewayProxyHandler = async (event, _context
       return {
         statusCode: 500,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
+          'Access-Control-Allow-Origin': '*'
         },
         body: `{ "message": "Internal Server Error. See the log file for details." }`
       };
