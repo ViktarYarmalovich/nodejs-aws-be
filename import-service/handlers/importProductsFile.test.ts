@@ -1,9 +1,6 @@
 import { importProductsFile } from "./importProductsFile";
 import { APIGatewayProxyEvent } from "aws-lambda";
 
-process.env.HOT_FOLDERS_BUCKET_REGION = 'eu-west-1';
-process.env.HOT_FOLDERS_BUCKET_NAME = 'hot-folders';
-
 const AWS = require("aws-sdk");
 
 const event: APIGatewayProxyEvent = {
@@ -38,7 +35,7 @@ test("Should return status code 400 if there is missisng 'name' query parameter"
 
 test("Should return status code 500 in case of any internal error", async () => {
 
-    process.env.HOT_FOLDERS_BUCKET_NAME = null;
+    process.env.HOT_FOLDERS_BUCKET_NAME = "";
 
     event.queryStringParameters = { name: "products_202011160333.csv" };
 

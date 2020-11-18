@@ -2,9 +2,10 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register';
 import * as AWS from 'aws-sdk';
 
-const { HOT_FOLDERS_BUCKET_NAME, HOT_FOLDERS_BUCKET_REGION } = process.env;
 
 export const importProductsFile: APIGatewayProxyHandler = async (event, _context) => {
+  const { HOT_FOLDERS_BUCKET_NAME, HOT_FOLDERS_BUCKET_REGION } = process.env;
+  
   console.log('event: ', event);
 
   const fileName = event.queryStringParameters === null ? false : event.queryStringParameters.name;

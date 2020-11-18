@@ -3,9 +3,10 @@ import 'source-map-support/register';
 import * as AWS from 'aws-sdk';
 import * as csv from "csv-parser";
 
-const { HOT_FOLDERS_BUCKET_NAME, HOT_FOLDERS_BUCKET_REGION } = process.env;
 
 export const importFileParser: S3Handler = (event: S3Event) => {
+  const { HOT_FOLDERS_BUCKET_NAME, HOT_FOLDERS_BUCKET_REGION } = process.env;
+
   console.log('event: ', event);
 
   const s3 = new AWS.S3({ region: HOT_FOLDERS_BUCKET_REGION });  
