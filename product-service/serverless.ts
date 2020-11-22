@@ -24,8 +24,40 @@ const serverlessConfiguration: Serverless = {
       minimumCompressionSize: 1024,
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: 'sns:*',
+        Resource: {
+          Ref: 'ImportCatalogNotificationTopic',
+        }
+      }
+    ]
+  },
+  resources: {
+    Resources: {
+      ImportCatalogNotificationTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'import-catalog-sns-topic',
+        },
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'vyarmolovich@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'ImportCatalogNotificationTopic',
+          },
+          FilterPolicy: {
+            dataValidity: ['valid'],
+          }
+        }
+      }
+    }
   },
   functions: {
     getProductsList: {
@@ -67,6 +99,17 @@ const serverlessConfiguration: Serverless = {
             method: 'post',
             path: 'products',
             cors: true,
+          }
+        }
+      ]
+    },
+    catalogBatchProcess: {
+      handler: 'handler.catalogBatchProcess',
+      events: [
+        {
+          sqs: {
+            batchSize: 5,
+            arn: 'arn:aws:sqs:eu-west-1:951127054177:import-catalog-sqs-queue'
           }
         }
       ]
