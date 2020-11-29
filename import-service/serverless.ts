@@ -23,15 +23,31 @@ const serverlessConfiguration: Serverless = {
       minimumCompressionSize: 1024,
     },
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_IMPORT_CATALOG_URL: { Ref: 'ImportCatalogQueue' }
     },
     iamRoleStatements: [
       {
         Effect: 'Allow',
         Action: 's3:*',
         Resource: 'arn:aws:s3:::hot-folders/*'
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: 'arn:aws:sqs:eu-west-1:951127054177:import-catalog-sqs-queue'
       }
     ]
+  },
+  resources: {
+    Resources: {
+      ImportCatalogQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'import-catalog-sqs-queue'
+        }
+      }
+    }
   },
   functions: {
     importProductsFile: {
