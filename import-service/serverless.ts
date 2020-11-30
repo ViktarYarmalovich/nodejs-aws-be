@@ -12,12 +12,14 @@ const serverlessConfiguration: Serverless = {
     webpack: {
       webpackConfig: './webpack.config.js',
       includeModules: true
-    }
+    },
+    stage: 'dev'
   },
-  plugins: ["serverless-webpack", "serverless-dotenv-plugin"],
+  plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
+    stage: '${self:custom.stage}',
     region: 'eu-west-1',
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -35,7 +37,9 @@ const serverlessConfiguration: Serverless = {
       {
         Effect: 'Allow',
         Action: 'sqs:*',
-        Resource: 'arn:aws:sqs:eu-west-1:951127054177:import-catalog-sqs-queue'
+        Resource: {
+          'Fn::GetAtt': ['ImportCatalogQueue', 'Arn'],
+        },
       }
     ]
   },
@@ -47,7 +51,17 @@ const serverlessConfiguration: Serverless = {
           QueueName: 'import-catalog-sqs-queue'
         }
       }
-    }
+    },
+    Outputs: {
+      sqsArn: {
+        Value: {
+          'Fn::GetAtt': ['ImportCatalogQueue', 'Arn'],
+        },
+        Export: {
+          Name: 'sqsArn',
+        },
+      },
+    },
   },
   functions: {
     importProductsFile: {
@@ -78,7 +92,7 @@ const serverlessConfiguration: Serverless = {
             event: 's3:ObjectCreated:*',
             rules: [
               { 
-                prefix: 'uploaded', 
+                prefix: 'uploaded/', 
                 suffix: '.csv', 
               },
             ],

@@ -5,10 +5,10 @@ import * as csv from 'csv-parser';
 
 
 export const importFileParser: S3Handler = (event: S3Event) => {
+  const { HOT_FOLDERS_BUCKET_NAME, HOT_FOLDERS_BUCKET_REGION, SQS_IMPORT_CATALOG_URL } = process.env;
+ 
   console.log('event: ', event);
   
-  const { HOT_FOLDERS_BUCKET_NAME, HOT_FOLDERS_BUCKET_REGION, SQS_IMPORT_CATALOG_URL } = process.env;
-
   const s3 = new AWS.S3({ region: HOT_FOLDERS_BUCKET_REGION });  
 
   try {
@@ -25,11 +25,11 @@ export const importFileParser: S3Handler = (event: S3Event) => {
           .createReadStream()
           .pipe(csv())
           .on("data", (data) => {
-            // console.log(data);
+            console.log(data);
 
             sqs.sendMessage({
                 QueueUrl: SQS_IMPORT_CATALOG_URL,
-                MessageBody: data
+                MessageBody: JSON.stringify(data)
               }, (err, data) => {
                 if (err) console.error(err, err.stack);
                 else console.log(`Send to SQS ${SQS_IMPORT_CATALOG_URL}: `, data);
