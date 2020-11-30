@@ -5,6 +5,8 @@ import { ProductModel } from '../services/product.model';
 import { ProductsService } from '../services/product.service';
 
 export const catalogBatchProcess: SQSHandler = async (event: SQSEvent, _context, _callback) => {
+    console.log('event: ', event);
+
     const { IMPORT_CATALOG_SNS_ARN } = process.env;
 
     try {
@@ -31,7 +33,7 @@ export const catalogBatchProcess: SQSHandler = async (event: SQSEvent, _context,
 
             await sns
                 .publish({
-                    Subject: "Imported Products",
+                    Subject: 'Imported Products',
                     Message: JSON.stringify(products),
                     TopicArn: IMPORT_CATALOG_SNS_ARN 
                 })

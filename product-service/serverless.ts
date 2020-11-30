@@ -12,19 +12,24 @@ const serverlessConfiguration: Serverless = {
     webpack: {
       webpackConfig: './webpack.config.js',
       includeModules: true
-    }
+    },
+    stage: 'dev'
   },
   // Add the serverless-webpack plugin
   plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
     runtime: 'nodejs12.x',
+    stage: '${self:custom.stage}',
     region: 'eu-west-1',
     apiGateway: {
       minimumCompressionSize: 1024,
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      IMPORT_CATALOG_SNS_ARN: {
+        Ref: 'ImportCatalogNotificationTopic',
+      }
     },
     iamRoleStatements: [
       {
@@ -33,6 +38,11 @@ const serverlessConfiguration: Serverless = {
         Resource: {
           Ref: 'ImportCatalogNotificationTopic',
         }
+      },
+      {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: '${cf:import-service-${self:custom.stage}.sqsArn}'
       }
     ]
   },
@@ -52,12 +62,9 @@ const serverlessConfiguration: Serverless = {
           TopicArn: {
             Ref: 'ImportCatalogNotificationTopic',
           },
-          FilterPolicy: {
-            dataValidity: ['valid'],
-          }
         }
       }
-    }
+    },
   },
   functions: {
     getProductsList: {
@@ -109,7 +116,7 @@ const serverlessConfiguration: Serverless = {
         {
           sqs: {
             batchSize: 5,
-            arn: 'arn:aws:sqs:eu-west-1:951127054177:import-catalog-sqs-queue'
+            arn: '${cf:import-service-${self:custom.stage}.sqsArn}'
           }
         }
       ]
