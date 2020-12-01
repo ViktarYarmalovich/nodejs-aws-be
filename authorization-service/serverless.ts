@@ -34,7 +34,7 @@ const serverlessConfiguration: Serverless = {
         {
           http: {
             method: 'get',
-            path: 'import',
+            path: 'auth',
           },
         },
       ],
